@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Map;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -38,22 +39,29 @@ public class PollServlet extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         try(PrintWriter out = response.getWriter()) {
 
-
-            Map<String, String[]>parameters = request.getParameterMap();
-            ArrayList<String>formLanguages = this.getAlChosenLanguages(parameters);
-
-            this.writeHtmlBegining(out);
-            this.writeAnswer(formLanguages, out);
-
-            PollResultFileWriter pollResultFileWriter = new PollResultFileWriter("results.txt");
-            pollResultFileWriter.readFromFile();
-            pollResultFileWriter.appendNewValues(formLanguages);
-            pollResultFileWriter.writeToFile();
-
-            this.writeResults(pollResultFileWriter.getChosenLanguage(), out);
-
-            this.writeHtmlEnd(out);
+            if(this.checkCookies(request, response)){
+                out.println("Głos został już oddany");
+            }else{
+                this.vote(request, out);
+            }
         }
+    }
+
+    private void vote(HttpServletRequest request, PrintWriter out) throws IOException {
+        Map<String, String[]>parameters = request.getParameterMap();
+        ArrayList<String>formLanguages = this.getAlChosenLanguages(parameters);
+
+        this.writeHtmlBegining(out);
+        this.writeAnswer(formLanguages, out);
+
+        PollResultFileWriter pollResultFileWriter = new PollResultFileWriter("results.txt");
+        pollResultFileWriter.readFromFile();
+        pollResultFileWriter.appendNewValues(formLanguages);
+        pollResultFileWriter.writeToFile();
+
+        this.writeResults(pollResultFileWriter.getChosenLanguage(), out);
+
+        this.writeHtmlEnd(out);
     }
 
     private ArrayList<String> getAlChosenLanguages(Map<String, String[]> parameters) {
@@ -106,6 +114,30 @@ public class PollServlet extends HttpServlet {
                 out.println("<br>");
             }
         }
+    }
+
+    private boolean checkCookies(HttpServletRequest request, HttpServletResponse response){
+        Cookie[] cookies = request.getCookies();
+
+        if(cookies != null){
+
+            for (Cookie cookie: cookies) {
+                if(cookie.getName().equals("alreadyVoted") && cookie.getValue().equals("true")){
+                    return true;
+                }
+            }
+
+            this.addCookieAlreadyVoted(response);
+        }else{
+            this.addCookieAlreadyVoted(response);
+        }
+
+        return false;
+    }
+
+    private void addCookieAlreadyVoted(HttpServletResponse response){
+        Cookie cookie = new Cookie("alreadyVoted", "true");
+        response.addCookie(cookie);
     }
 
     @Override

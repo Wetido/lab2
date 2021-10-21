@@ -33,10 +33,14 @@
         </form>
 
         <br>
-
         <form action="ShowCsvServlet" method="POST">
-
             <input type="submit" value="Pobierz csv">
         </form>
+
+        <br>
+        <form action="ShowImageServlet" method="POST">
+            <input type="submit" value="Pokaz obrazek">
+        </form>
+
     </body>
 </html>
