@@ -21,7 +21,7 @@ import java.util.Map;
  *
  * @author student
  */
-public class Helper {
+public class PollResultFileWriter {
 
     /**
      * @param args the command line arguments
@@ -37,8 +37,11 @@ public class Helper {
         return chosenLanguage;
     }
 
-    public Helper(String path) {
-        this.path = path;
+    public PollResultFileWriter(String fileName) throws IOException {
+
+        String path = new File(".").getCanonicalPath();
+        System.out.println(path);
+        this.path = path + fileName;
         chosenLanguage = new HashMap<>();
     }
 

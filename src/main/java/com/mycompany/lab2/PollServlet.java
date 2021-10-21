@@ -45,12 +45,12 @@ public class PollServlet extends HttpServlet {
             this.writeHtmlBegining(out);
             this.writeAnswer(formLanguages, out);
 
-            Helper helper = new Helper("C:\\PLIKI\\Programowanie\\lab2\\src\\main\\java\\com\\mycompany\\lab2\\" + "results.txt");
-            helper.readFromFile();
-            helper.appendNewValues(formLanguages);
-            helper.writeToFile();
+            PollResultFileWriter pollResultFileWriter = new PollResultFileWriter("results.txt");
+            pollResultFileWriter.readFromFile();
+            pollResultFileWriter.appendNewValues(formLanguages);
+            pollResultFileWriter.writeToFile();
 
-            this.writeResults(helper.getChosenLanguage(), out);
+            this.writeResults(pollResultFileWriter.getChosenLanguage(), out);
 
             this.writeHtmlEnd(out);
         }

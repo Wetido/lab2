@@ -31,5 +31,12 @@
             
             <input type="submit" id="submit" value="Submit">
         </form>
+
+        <br>
+
+        <form action="ShowCsvServlet" method="POST">
+
+            <input type="submit" value="Pobierz csv">
+        </form>
     </body>
 </html>
