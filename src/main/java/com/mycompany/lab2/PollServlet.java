@@ -41,6 +41,7 @@ public class PollServlet extends HttpServlet {
 
             if(this.checkCookies(request, response)){
                 out.println("Głos został już oddany");
+                this.writeRedirectForm(out);
             }else{
                 this.vote(request, out);
             }
@@ -61,6 +62,7 @@ public class PollServlet extends HttpServlet {
 
         this.writeResults(pollResultFileWriter.getChosenLanguage(), out);
 
+        this.writeRedirectForm(out);
         this.writeHtmlEnd(out);
     }
 
@@ -71,6 +73,12 @@ public class PollServlet extends HttpServlet {
         }else{
             return new ArrayList<>();
         }
+    }
+
+    private void writeRedirectForm(PrintWriter out){
+        out.println("<form action=\"RedirectServlet\" method=\"POST\">");
+        out.println("<input value=\"Wroc na strone glowna\" type=\"submit\" id=\"submit\" value=\"Submit\">");
+        out.println("</form>");
     }
 
     private void writeHtmlBegining(PrintWriter out){
@@ -93,7 +101,7 @@ public class PollServlet extends HttpServlet {
 
 
         if(chosenLanguages.isEmpty()){
-            out.println("<h1>Nic nie umiesz! Weź się za naukę gnoju!</h1>");
+            out.println("<h1Nie wybrano jezyka!</h1>");
         }else{
             out.println("<h1>Umiesz jezyki</h1>");
             for (String language: chosenLanguages) {
